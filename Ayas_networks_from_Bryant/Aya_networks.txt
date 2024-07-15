@@ -1,0 +1,7 @@
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
+Type	Solu_type	Add_Penalty	Rem_Penalty	Number_of_Colors	Minimal_Colors	Solution_type	Setup_time	Solving_time
