@@ -32,7 +32,8 @@ def graph_to_matrix(G, order_nodes):
 
 
 #Types of community detection
-Community_type = ['200_nodes',"1886_nodes",'9878_nodes']
+# Community_type = ['200_nodes',"1886_nodes",'9878_nodes']
+Community_type = ['small_test']
 
 meta_data = "Aya_networks.txt"
 
@@ -44,7 +45,7 @@ with open(meta_data, "a") as file:
 ##Basic loop
 for comm_type in Community_type:
     #read data
-    workpath='/Users/bryant_avila/Projects/Ayas_networks/'
+    workpath='/Users/phillips/Documents/GitHub/genes_coloring/Ayas_networks_from_Bryant/'
     
     #subfolders
     dirpath = workpath + 'data/'+comm_type+'/'
@@ -72,7 +73,7 @@ for comm_type in Community_type:
     
     Save_Network_to_files = False
     
-    weights = [[1,1]]
+    weights = [[1,1], [0,1], [0,10], [0,100], [0,1000]]
     
     Save_output = True
     
@@ -97,7 +98,7 @@ for comm_type in Community_type:
 
                         A,B,C,D,E,F,G,H,I,Setup_time = rep.set_rmip(gpath,cpath,'David',HardFlag,[],[],InDegOneFlag,RM_AD,pbath)
     
-                        for option in range(0,1):
+                        for option in range(0,5):
                             rm_weight = weights[option][0]
                             add_weight = weights[option][1] 
     
