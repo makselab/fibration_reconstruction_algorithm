@@ -1,5 +1,4 @@
-#small test
-#source	target	weight
+source	target	weight
 IL15RA	IL4R	1
 P2RY13	CX3CR1	1
 P2RY13	SELPLG	1

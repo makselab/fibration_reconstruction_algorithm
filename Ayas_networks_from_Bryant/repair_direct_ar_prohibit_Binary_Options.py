@@ -1,5 +1,9 @@
-
-
+##repair_direct_ar_prohibit_Binary_Options.py
+#by David Phillips
+#the model is as follows:
+#Given a directed network and a coloring of the network, 
+#find the minimum number of edges to add or remove
+#to ensure the coloring is inbalanced 
 import networkx as nx
 import gurobipy as gp
 from gurobipy import GRB
@@ -28,8 +32,12 @@ def get_key_from_value(dictionary, value):
 def read_data(fname,colorfile,xlinks=None):
     
     #load starting network
-    GraphData = pd.read_csv(fname,sep=charsep,index_col=[0,1],header=None)
-    
+    GraphData = pd.read_csv(fname,sep=charsep,index_col=[0,1],header=None, \
+                            comment="#")
+#    GraphData = pd.read_csv(fname,sep=charsep,header=0)
+#    print(GraphData)
+#    gdkey = list(GraphData.to_dict().keys())[2]
+#    print("key is: " + str(gdkey))
     #remove selfloops
     #GraphData=GraphData[GraphData.index.get_level_values(0)!=GraphData.index.get_level_values(1)]
 
@@ -42,6 +50,7 @@ def read_data(fname,colorfile,xlinks=None):
     #directed graph!
     EdgeDict = GraphData.to_dict()[2]
     
+    ##print(EdgeDict)
     
     #get the edge set, Edges, and edge weights
     edges,edge_weights = gp.multidict(EdgeDict)
@@ -58,10 +67,12 @@ def read_data(fname,colorfile,xlinks=None):
     
     #cdict keys are  
     ##read in color set
-    ctable=pd.read_csv(colorfile,index_col=0,sep=charsep,header=None)        
+    ctable=pd.read_csv(colorfile,index_col=0,sep=charsep,header=None,\
+                       comment="#")        
+    #ctable=pd.read_csv(colorfile,index_col=0,sep=charsep,header=0)        
     cdict = ctable.to_dict()[1]
     
-    
+    print("Read graph: n="+str(len(nodes))+" m="+str(len(edges)))
 
     #set up a list of colorsets
     color_sets = []        
@@ -70,7 +81,6 @@ def read_data(fname,colorfile,xlinks=None):
         C = [i for i in cdict.keys() if cdict[i]==c]
         color_sets.append(C)
         color_dict[c] = C
-    
     
      
     color_pairs =[]
@@ -83,6 +93,9 @@ def read_data(fname,colorfile,xlinks=None):
                 
         for p,q in itools.combinations(C,2):
             color_pairs.append((p,q))            
+
+    print("Read colors")
+
             
     nc_tuples = []
     outer_imbalance_dict = defaultdict(dict)
@@ -104,38 +117,58 @@ def read_data(fname,colorfile,xlinks=None):
                     nc_tuples.append((p,q,c))
                     nc_tuples.append((q,p,c))
                 
-                
+    print("Created tuples")
 
-    node_pairs = [] #undirected pairs
-    all_pairs = [] #directed pairs
-    for p in nodes:
-        for q in nodes:
-            if p != q:
-                all_pairs.append((p,q))
-                #node pairs only once
-                if (p,q) not in node_pairs and (q,p) not in node_pairs:
-                    node_pairs.append((p,q))
+
+#    node_pairs = itools.combinations(nodes,2) #undirected pairs
+    all_pairs_1 = [(i,j) for i,j in itools.combinations_with_replacement(nodes,2) \
+                if i != j] #directed pairs
+    all_pairs_2 = [(j,i) for i,j in itools.combinations_with_replacement(nodes,2) \
+                if i != j] #directed pairs
+    all_pairs = all_pairs_1+all_pairs_2
+    #node_pairs=[]
+    #all_pairs=[]
+    #for p in nodes:
+    #    for q in nodes:
+    #        if p != q:
+    #            all_pairs.append((p,q))
+    #            #node pairs only once
+    #            if (p,q) not in node_pairs and (q,p) not in node_pairs:
+    #                node_pairs.append((p,q))
     
-    if xlinks!=None:
+    
+#    for (i,j) in all_pairs:
+#        if (i,j) not in all_pairs_t:
+#            print("pair not in t: "+str(i)+" "+str(j))
+        
+    print("created all pairs")
+    
+    za = True
+#    if xlinks!=None:
+    if za == False:
+        print(xlinks)
         prohibited = pd.read_csv(xlinks,sep=charsep,index_col=[0,1],header=None)
         #no_access = pd.concat([GraphData,prohibited]);
         
         #directed graph!
         #non_existing_EdgeDict = no_access.to_dict()[2]
         non_existing_EdgeDict = prohibited.to_dict()[2]
+        non_existing_EdgeDict.update(EdgeDict)
         
         edges_to_avoid = non_existing_EdgeDict.copy()
-        edges_to_avoid.update(EdgeDict)
-        
         avoid_edges,ae_edge_weights = gp.multidict(edges_to_avoid)
+        
+        #print(avoid_edges)
         
         not_e = {(p,q):1 for (p,q) in all_pairs if (p,q) not in avoid_edges}
         not_edges,ne_weights = gp.multidict(not_e)
-        
+        print("Read prohibited edges: "+str(len(edges_to_avoid))+" prohibited edges")        
     else:
         not_e = {(p,q):1 for (p,q) in all_pairs if (p,q) not in edges}
         not_edges,ne_weights = gp.multidict(not_e)
-        
+    
+
+    
     inputs = {}     
     inputs['nodes'] = nodes
     inputs['edges'] = edges
@@ -306,6 +339,7 @@ def set_rmip(graphpath,colorpath,Imbalance,HardFlag,\
 
 
     #create the inputs
+    print("Reading data from " + graphpath + " and " + colorpath)
     inputs = read_data(graphpath,colorpath,prohibit)
     
     #temporary -- setdict will be depracated
@@ -323,9 +357,11 @@ def set_rmip(graphpath,colorpath,Imbalance,HardFlag,\
     env = gp.Env()
     
     #create the model
+    print("Creating model")
     rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg = \
         CreateRMIP(inputs,env,Imbalance,HardFlag,FixedEdges,FixedNonEdges,AddRemoveFlag,InDegOneFlag)
 
+    
 
     # Record the time after initializing the environment
     end_time = time.time()
@@ -338,7 +374,7 @@ def set_rmip(graphpath,colorpath,Imbalance,HardFlag,\
 
     return rmip,rcons,rvars,setdict,color_sets,remove_edge,add_edge,node_balance_pos,node_balance_neg,setup_time
 
-def rmip_optomize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1):
+def rmip_optimize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1):
     
     #need objective
     if HardFlag:
@@ -367,7 +403,7 @@ def rmip_optomize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_ba
     
 
     #set the time limit -- not yet needed
-    rmip.setParam("TimeLimit", 60)
+    #rmip.setParam("TimeLimit", 60)
 
     #optimize
     startTime_Prime = time.time()
@@ -382,7 +418,7 @@ def solve_and_write(graphpath,colorpath,rm_weight,add_weight,fname,rmip,rcons,\
                        HardFlag=True,FixedEdges=[],FixedNonEdges=[],InDegOneFlag=True,\
                        prohibit=None,Save_info=True,NetX=False):
     
-    rmip,rcons,rvars,executionTime = rmip_optomize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1)
+    rmip,rcons,rvars,executionTime = rmip_optimize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1)
     
     
     #find the edge removes
@@ -490,12 +526,14 @@ def solve_and_write(graphpath,colorpath,rm_weight,add_weight,fname,rmip,rcons,\
     
         print("\n\n",end="",file=f)
         print("Input graph",file=f)
-        GraphData = pd.read_csv(graphpath,sep=charsep,index_col=[0,1],header=None)
+        GraphData = pd.read_csv(graphpath,sep=charsep,index_col=[0,1],header=None, \
+                                comment="#")
         GraphData.to_csv(f,sep=' ')
         
     
         print("Input colors",file = f)
-        ctable=pd.read_csv(colorpath,index_col=0,sep=charsep,header=None)    
+        ctable=pd.read_csv(colorpath,index_col=0,sep=charsep,header=None, \
+                                comment="#")    
         ctable.to_csv(f,sep=' ')
         
         if prohibit!=None:

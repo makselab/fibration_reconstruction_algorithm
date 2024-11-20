@@ -1,5 +1,4 @@
-#small test
-#gene	cluster
+gene	cluster
 MEOX2	1454
 FAM129A	1454
 MFAP4	1454

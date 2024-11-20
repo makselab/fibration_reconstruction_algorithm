@@ -33,7 +33,9 @@ def graph_to_matrix(G, order_nodes):
 
 #Types of community detection
 # Community_type = ['200_nodes',"1886_nodes",'9878_nodes']
-Community_type = ['small_test']
+#Community_type = ['small_test']
+Community_type = ['C_H_GC_smaller']
+# Community_type = ['C_H_GC_FintS']
 
 meta_data = "Aya_networks.txt"
 
@@ -73,7 +75,8 @@ for comm_type in Community_type:
     
     Save_Network_to_files = False
     
-    weights = [[1,1], [0,1], [0,10], [0,100], [0,1000]]
+    #weights = [[1,1], [0,1], [0,10], [0,100], [0,1000]]
+    weights = [[1,1]]
     
     Save_output = True
     
@@ -98,7 +101,7 @@ for comm_type in Community_type:
 
                         A,B,C,D,E,F,G,H,I,Setup_time = rep.set_rmip(gpath,cpath,'David',HardFlag,[],[],InDegOneFlag,RM_AD,pbath)
     
-                        for option in range(0,5):
+                        for option in range(0,len(weights)):
                             rm_weight = weights[option][0]
                             add_weight = weights[option][1] 
     
