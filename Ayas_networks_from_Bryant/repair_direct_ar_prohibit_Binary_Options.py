@@ -5,6 +5,8 @@
 #find the minimum number of edges to add or remove
 #to ensure the coloring is inbalanced 
 import networkx as nx
+import graphs as gra
+import numpy as np
 import gurobipy as gp
 from gurobipy import GRB
 from gurobipy import abs_
@@ -17,12 +19,20 @@ import time
 ##precision parameter
 epsilon = .001
 
-#add and remove flags
+#add and remove flag constants -- not to be changed
 ADDONLY = 1
 RMONLY = 2
 BOTHADDRM = 3
 
 charsep='\t'
+
+#this code calculates the minimal number of balanced partitions 
+##gg should be an nx.DiGraph
+def FindMP(gg):
+    gm = np.transpose(nx.adjacency_matrix(gg))
+    network = gra.CoupledCellNetwork(gm.todense())
+    grain = network.top_lattice_node() #most partitions
+    return(len(set(grain[0]))), network
 
 def get_key_from_value(dictionary, value):
     for key, val in dictionary.items():
@@ -143,6 +153,7 @@ def read_data(fname,colorfile,xlinks=None):
         
     print("created all pairs")
     
+    #prohibited edges are turned off right now
     za = True
 #    if xlinks!=None:
     if za == False:
@@ -418,7 +429,8 @@ def solve_and_write(graphpath,colorpath,rm_weight,add_weight,fname,rmip,rcons,\
                        HardFlag=True,FixedEdges=[],FixedNonEdges=[],InDegOneFlag=True,\
                        prohibit=None,Save_info=True,NetX=False):
     
-    rmip,rcons,rvars,executionTime = rmip_optimize(rmip,rcons,rvars,remove_edge,add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1)
+    rmip,rcons,rvars,executionTime = rmip_optimize(rmip,rcons,rvars,remove_edge,\
+                                                   add_edge,node_balance_pos,node_balance_neg,rm_weight,add_weight,HardFlag,Solu_type,bal_weight=1)
     
     
     #find the edge removes
@@ -547,6 +559,10 @@ def solve_and_write(graphpath,colorpath,rm_weight,add_weight,fname,rmip,rcons,\
         
     else:
         gname=[]; EdgesRemoved=[]; EdgesAdded=[]; outfname=[]; #sumremovals=[]; sumadds=[];
+
+    minp, net = FindMP(G_result)
+    
+    print(f"Found {minp} colors, minimal is {idealnum}")
 
     #return output file name and the number of partitions
     return gname,idealnum,EdgesRemoved,EdgesAdded,sumremovals,sumadds,outfname,rmip,rcons,rvars,G_result,executionTime
