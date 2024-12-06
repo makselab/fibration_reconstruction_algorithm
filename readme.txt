@@ -15,4 +15,4 @@ The main usage is to run the repair file from the command line. Run:
 python repair.py -h
 
 for the options. One sample run would be:
-python repair.py -i "200_nodes/200_nodes.graph.txt" -p "200_nodes/200.yaml" -c "200_nodes/200_nodes.colors.txt" -o "200_nodes_o"
+python repair.py -i "200_nodes/200_nodes.graph.txt" -p "200_nodes/200.yaml" -c "200_nodes/200_nodes.colors.txt" -o "200_nodes/200_nodes_o_"
