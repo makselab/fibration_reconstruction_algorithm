@@ -1,7 +1,7 @@
 ##A samle file params.yaml file for the repair code
 ## There must be a space between the : and the argument!!
 ## by djp
-run_name: Testing
+run_name: 200nodes
 ## only binary currently implemented
 ## weighted will be next
 edge_weight_type: binary
