@@ -3,14 +3,14 @@ This repository contain code to perform network repair of directed graph based i
 
 # Repository content 
 
-- repair_direct_ar_prohibit_Binary_Options.py 
-    This script provides a solution to the problem of finding the minimum number of edges to add or remove in a directed network to ensure the coloring is imbalanced. It uses Gurobi for optimization and NetworkX for graph manipulation.
-
 - repair.py 
-    This script is called by repair_direct_ar_prohibit_Binary_Options.py and processes input files and parameters to perform a specific task related to graph edges. It requires several input files and parameters to run correctly.
+    Main script that takes in graph file, node color files and parameter file and uses repair_direct_ar_prohibit_Binary_Options.py to solve MIP. 
+
+- repair_direct_ar_prohibit_Binary_Options.py  
+    This script provides a solution to the problem of finding the minimum number of edges to add or remove in a directed network to ensure the coloring is imbalanced. It uses Gurobi for optimization and NetworkX for graph manipulation. Called by repair.py
 
 - 200_nodes/ 
-    Contains: 
+    Contains:  
         - 200.yaml 
             file params.yaml file for the repair code
         - 200_nodes.colors.txt
