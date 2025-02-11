@@ -9,14 +9,20 @@ This repository contain code to perform network repair of directed graph based i
 - repair_direct_ar_prohibit_Binary_Options.py  
     This script provides a solution to the problem of finding the minimum number of edges to add or remove in a directed network to ensure the coloring is imbalanced. It uses Gurobi for optimization and NetworkX for graph manipulation. Called by repair.py
 
-- 200_nodes/ 
-    Contains:  
-        - 200.yaml 
-            file params.yaml file for the repair code
-        - 200_nodes.colors.txt
-            tab-separated, no header. Columns: node, label/color
-        - 200_nodes.graph.txt
-            tab-separated, no header. Columns: source, target, weight(no weight:1)
+- disparity.ipynb - code for calculating color disparity  
+
+- data
+    - BRnc_088 - data for cerebellum brain region, non-corrected, 0.88 threshold
+        - H
+    - 200_nodes/ 
+        Contains:  
+            - 200.yaml 
+                file params.yaml file for the repair code
+            - 200_nodes.colors.txt
+                tab-separated, no header. Columns: node, label/color
+            - 200_nodes.graph.txt
+                tab-separated, no header. Columns: source, target, weight(no weight:1)
+    - test
 
 - graphs.py
 
@@ -37,4 +43,4 @@ The main usage is to run the repair file from the command line. Run:
 python repair.py -h
 
 for the options. One sample run would be:
-python repair.py -i "200_nodes/200_nodes.graph.txt" -p "200_nodes/200.yaml" -c "200_nodes/200_nodes.colors.txt" -o "200_nodes/200_nodes_o_"
+python repair.py -i "data/BRnc_088/H/FHintS.graph.txt" -p "data/BRnc_088/H/BRnc_088.yaml" -c "data/BRnc_088/H/F_louvain.colors.txt" -o "data/BRnc_088/H/FHintS_o_"
